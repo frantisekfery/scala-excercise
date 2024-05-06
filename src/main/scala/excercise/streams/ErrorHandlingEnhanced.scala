@@ -1,4 +1,4 @@
-package excercise
+package excercise.streams
 
 import akka.Done
 import akka.actor.typed.ActorSystem

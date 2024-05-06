@@ -1,26 +1,17 @@
-# Scala Learning
+# Streams
 
-This project is created for learning scala purpose.
-
-## Streams
-Stream processing distributes computation over large volumes of high-velocity, continuously-generated data—datasets that
-are too large for traditional databases.
-
-### Libraries
-
+## Libraries
 1) Akka Streams
 2) Spark Streaming
 3) Kafka Streams
-4) Apache Flink
 
-#### Common features
+### Common features
 1. High throughput
 2. Scalable 
 3. Fault Tolerant 
 4. Concurrent
 
-### Kafka Streams
-
+## Kafka Streams
 Kafka Streams is a client library designed for building mission-critical real-time applications and microservices, with
 the input and output data stored in Kafka clusters for processing unbounded data. It includes multiple producers
 enqueueing records and multiple consumers reading from various points in the topics.
@@ -52,8 +43,7 @@ P3 is hosted on K3, replicated on K1, and consumed by consumers C1 and C2 from G
 This maximizes **parallel processing**, as consumers from each group processes data independently of one partition, 
 allowing the system to efficiently handle increased workloads.
 
-#### Strengths
-
+### Strengths
 - Designed as a library for Apache Kafka to process unbounded data.
 - Enables robust stream processing, such as windowed aggregations and data stream joins, without a separate cluster
   requirement.
@@ -64,16 +54,15 @@ a Streams application instance fails)
 - The KS API allows a Java/Scala application to interact with a Kafka Cluster.
 - Multiple applications can interact with the same cluster.
 - The architecture promotes the use of microservices.
+- Best for high-performance streams outside your microservice's logic which use the same mesage bus and low-latency
 
-#### Weaknesses
-
+### Weaknesses
 - Uses procedural Java-style API.
 - Requires a separate Kafka Cluster with its own management (not necessarily on separate physical machines).
 - Needs comprehensive configuration knowledge.
 - Supports only producer-consumer type architectures.
 
-### Akka Streams
-
+## Akka Streams
 Akka Streams is a powerful implementation of the Reactive Streams specification, designed for processing and 
 transforming a stream of data. It's developed on top of the Akka toolkit. It employs back-pressure to ensure that faster 
 producers don't overwhelm slower consumers.
@@ -89,43 +78,48 @@ event (1-to-1 event-driven transforms).
 Akka Streams has strong type-safety features, which makes it easier to construct correct systems. It's also built with 
 an eye towards concurrency and distribution, as streams can be parallelized and distributed across multiple nodes.
 
-#### Strengths
+Akka Streams doesn't support out of the box exactly-once feature. There are 3 strategies how to achieve it in application
+level. Try to make your operation idempotent (with timestamps), event de-duplication (with IDs, you are checking 
+database or cache, whether arrived event with given ID was processed, you have to take care of properly cleaning cash or
+database), transactional writes (also with IDs, you are writing into database more inserts in one transaction and if
+either statement fails, whole transaction won't take an effect).
 
-- Back-pressure feature ensures data integrity and system resilience.
-- Flexibly composable stages allow for complex, custom data processing graphs.
-- Strong type-safety eases the development of correct systems.
-- Concurrency and distribution capabilities make it powerful for large-scale systems.
-- Provides Java and Scala APIs for broad accessibility.
+### Strengths
+- Back-pressure feature ensures data integrity and system resilience
+- Flexibly composable stages allow for complex, custom data processing graphs
+- Strong type-safety eases the development of correct systems
+- Concurrency and distribution capabilities make it powerful for large-scale systems
+- Provides Java and Scala APIs for broad accessibility
 - High scalability and fault-tolerance. The scalability of Akka streams is more focused on the application level.
 Within a distributed or concurrent application environment, Akka is well-equipped to deal with high load and can 
-seamlessly distribute this across actors and resources.
+seamlessly distribute this across actors and resources
+- Best for high-performance streams that are part of the business logic with low-latency without managing other clusters
 
-#### Weaknesses
-
+### Weaknesses
 - Steeper learning curve compared to some other Stream processing libraries due to its powerful feature set and unique 
-terminology.
-- It may be overkill for simple jobs due to its complexity.
+terminology
+- It may be overkill for simple jobs due to its complexity
 - As part of the larger Akka toolkit, it is intertwined with other Akka libraries, which can make it heavy-weight,
-especially if only the stream processing functionality is needed.
+especially if only the stream processing functionality is needed
 - Less suited for handling truly massive datasets
 
-#### Actors in Akka Streams
+### Actors in Akka Streams
 When an Akka Stream run, it is materialized to a network of Akka Actors that handle the data processing. Akka Stream
 stages become Actors when the stream starts running. However, you do not have to directly interact with these actors
 when defining your stream processing logic. Flow.ask function can be used to integrate actors into a stream, for
 delegating some processing to the actors.
 
-#### Parallelism and Concurrency in Streams
+### Parallelism and Concurrency in Streams
 Akka Streams has operators like **mapAsync** and **mapAsyncUnordered** which provide a way to handle computations in
 parallel without needing to manually deal with actors or futures. The operator **groupBy** allows dividing a stream into
 substreams which can be processed independently, providing another angle for concurrent processing.
 
-#### Scaling Processing with Akka Actors
+### Scaling Processing with Akka Actors
 For extensive computational workloads, you can utilize a pool of actors within the streams. Akka provides several
 routing strategies, including RoundRobinPool, RandomPool, SmallestMailboxPool, and BalancingPool. Each strategy affects
 how messages are distributed across the actor pool.
 
-#### Routing Strategies
+### Routing Strategies
 1) **RoundRobinPool**: Works best when each task requires roughly the same amount of processing time.
 2) **RandomPool**: Randomly selects an actor for each message, useful when routing cost is much higher than processing.
 3) **BalancingPool**: Works best with tasks of vastly different processing times, and aims to keep all actors busy by 
@@ -133,61 +127,45 @@ routing new tasks to idle actors. The caveat is that it assumes all actors are l
 4) **SmallestMailboxPool**: Is useful when the actors are approximately equally fast at processing messages. It routes 
 new messages to the actor that has the fewest messages waiting in its mailbox.
 
-#### Spark Streaming
-Spark Streaming is an extension of the core Spark API that enables scalable, high-throughput, fault-tolerant stream 
-processing of live data streams. Data can be ingested from many sources like Kafka, Flume, Kinesis, or TCP sockets,
-and can be processed using complex algorithms expressed with high-level functions like map, reduce, join and window. 
-Finally, processed data can be pushed out to file systems, databases, and live dashboards. However, unlike Akka Streams, 
-its focus is on processing big data, and it lacks backpressure concept.
+## Spark Streaming
+Spark Streaming is an extension of the core Spark API that allows scalable, high-throughput, and fault-tolerant stream 
+processing of live data streams. It can ingest data from sources like Kafka, Akka, Amazon Kinesis, and more in real 
+time.
 
-### Akka Streams
-Akka Streams is a library within the Akka platform that handles streaming data in applications. It’s designed to control
-the flow of large amounts of data so it doesn’t overwhelm the memory of your system.
+Data is processed in micro-batches rather than individual records, which are processed using Spark's core engine to 
+distribute across a cluster. This approach makes Spark Streaming a micro-batch processing system.
 
+The 'DStreams' model, short for Discretized Streams, forms the basic building block of the Spark Streaming library. 
+A DStream can be defined as a sequence of RDDs (Resilient Distributed Datasets), which are the primary data abstraction 
+in Spark. These RDDs can be processed using transformations and actions provided by Spark Core.
 
-Retry: Retry suggests the reattempts operations in case of failures. For instance, if you are making a network request 
-in an Akka stream and that operation fails, you may want to retry that operation a fixed number of times before giving
-up.
+### Strengths
+- High-level functions such as map, reduce, join, window, and more
+- Provides exactly-once processing semantics with powerful capabilities through Spark Core
+- Scales easily with the number of nodes in the cluster, providing linear scalability
+- High-throughput and fault-tolerant capabilities
+- APIs provided in multiple languages such as Java, Scala, and Python
+- Provides seamless integration with other Spark tools like MLlib and GraphX for machine learning and graph processing
+- Best for unbounded big data computations
 
-Kinesis / Kafka: Both Kinesis and Kafka are high-throughput, distributed data streaming platforms used for real-time 
-ingestion of data.
+### Weaknesses
+- Loss of type safety in the DataFrame/SQL API
+- As a micro-batch processing system, Spark Streaming cannot provide true real-time processing; the latency is tied to 
+the duration of the micro-batches
+- Complex and custom operations are harder to implement
+- Requires a relatively deep understanding of the entire Spark ecosystem due to its tight integration with Spark Core
+- Needs dedicated cluster
+- Bad for low latency/real-time system
 
-Commit: 'Committing' is a way of confirming that a particular operation or set of operations were successful.
+### Spark Streaming Resilience
+Spark Streaming is designed to be a fault-tolerant system. When dealing with the failure of worker nodes, it uses the 
+lineage information of RDDs to recover the lost data.
 
-Checkpoint: A 'checkpoint' in stream processing is the process of saving the state of a stream at specific intervals to
-enable rollback or recovery in case of failures. This is important for ensuring exactly-once semantics.
+### Spark Streaming High Availability
+Spark Streaming can recover from failure of the driver node as well, although this feature needs to be explicitly 
+enabled. To support driver node recovery, Spark uses a write-ahead log design to save the received data into 
+a fault-tolerant storage system, which helps ensure that no data is lost.
 
-Message processing semantics: When processing messages, how you handle them can be crucial to the behavior of your
-application. There are three primary modes: 'at least once', where each message is processed one or more times; 
-'at most once', where each message is processed no more than once and messages may get lost; and 'exactly once', where 
-each message is processed precisely once—which is a more complex mode that usually involves transactions or
-deduplication.
-
-Database Scaling: Scaling databases means adjusting to accommodate more traffic. This can be horizontal scaling (adding 
-more servers) or vertical scaling (upgrading the capabilities of an existing server).
-
-Serializer for Distributed System: Serializers convert objects into a format that can be transferred over the network 
-(or stored on disk), then convert them back into objects. In a distributed system like Akka or Kafka, you need efficient
-serializers for low latency and less network usage. Here are some:
-1) Protocol Buffers (protobuf): need to have schemas
-2) Apache Avro (avro4s)
-3) JSON (json4s and Circle)
-
-Akka Cluster: Akka Cluster provides a fault-tolerant decentralized peer-to-peer based cluster membership service with no 
-single-point-of-failure or single point of bottleneck. It does this using gossip protocols and an automatic failure 
-detector.
-
-Akka Persistence: Akka Persistence provides easy-to-use APIs for saving the state of actors. The state of an actor is 
-typically the past received messages (events) and current state derived from these events. Persisting actor state 
-enables state recovery after JVM crashes or restarts, and also enables actors to move to different nodes in a cluster.
-
-Persistence store: The persistence store, as used by Akka Persistence, is the database where actor states/events are
-saved. This could be a traditional SQL database, a NoSQL database like Cassandra, or a file system.
-
-Event sourcing via Akka Persistence: Event sourcing is the practice of saving every state-changing event of an 
-application. This allows complete "replay" of an application's state by simply rerunning all events. With Akka 
-Persistence, you can achieve event sourcing by saving every received message with the persist function.
-
-
-
-Each scala object in package [excercise](src/main/scala/excercise) is executable.
+### Spark Streaming in Cluster Managers
+Spark Streaming applications can be run on different cluster managers supported by Spark such as Hadoop YARN, Mesos, 
+Kubernetes, or its standalone cluster manager.

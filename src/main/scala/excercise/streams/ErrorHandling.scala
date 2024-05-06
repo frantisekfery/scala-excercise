@@ -1,10 +1,10 @@
-package excercise
+package excercise.streams
 
-import akka.{Done, NotUsed}
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
-import akka.stream.{ActorAttributes, Supervision}
 import akka.stream.scaladsl._
+import akka.stream.{ActorAttributes, Supervision}
+import akka.{Done, NotUsed}
 import org.slf4j.Logger
 
 import scala.concurrent.{ExecutionContextExecutor, Future}

@@ -1,10 +1,10 @@
-package excercise
+package excercise.streams
 
-import akka.{Done, NotUsed}
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.stream.ClosedShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RunnableGraph, Sink, Source, Zip}
+import akka.{Done, NotUsed}
 import org.slf4j.Logger
 
 import scala.collection.mutable.ListBuffer
