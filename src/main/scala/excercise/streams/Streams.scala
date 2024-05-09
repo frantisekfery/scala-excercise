@@ -1,9 +1,8 @@
-package excercise
+package excercise.streams
 
-import akka.stream._
-import akka.stream.scaladsl._
 import akka.actor._
 import akka.persistence._
+import akka.stream.scaladsl._
 import com.amazonaws.services.kinesis.model.Record
 import org.slf4j.{Logger, LoggerFactory}
 

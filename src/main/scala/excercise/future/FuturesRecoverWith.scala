@@ -40,10 +40,7 @@ object FuturesRecoverWith extends App {
 
   // Retry
   private def getUserWithRetry(id: Int, retries: Int = retryAttempts): Future[APIResponse] = for {
-      response <- getUser(id)
-        .recoverWith {
-          case ex => Future.successful(ErrorResponse(500, ex.getMessage))
-        }
+      response <- getUser(id).recoverWith { case ex => Future.successful(ErrorResponse(500, ex.getMessage))}
       result <- response match {
         case success: SuccessResponse => Future.successful(success)
         case error: ErrorResponse if retries == 0 => Future.successful(ErrorResponse(error.code, s"When fetchin user with ID: $id, ${error.error}"))
@@ -53,9 +50,7 @@ object FuturesRecoverWith extends App {
 
   private val emptyResponseListAsFuture = Future.successful(List.empty[APIResponse])
 
-  ids.foldLeft(emptyResponseListAsFuture)
-    { (accumulatedResponsesFuture, id) =>
-      for {
+  ids.foldLeft(emptyResponseListAsFuture) { (accumulatedResponsesFuture, id) => for {
         accumulatedResponses <- accumulatedResponsesFuture
         apiResponse <- getUserWithRetry(id)
       } yield apiResponse match {
