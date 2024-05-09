@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Random, Success}
 
-object Futures2 extends App {
+object FuturesRecoverWith extends App {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
   // API responses

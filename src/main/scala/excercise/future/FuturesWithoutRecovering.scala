@@ -5,7 +5,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Random, Success}
 
-object Futures extends App {
+object FuturesWithoutRecovering extends App {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
   // API responses
@@ -49,26 +49,26 @@ object Futures extends App {
 
   // Sequential processing of future:
   private val sequential: Future[List[APIResponse]] = ids.foldLeft(emptyResponseListAsFuture) { (accResponsesF, id) =>
-    accResponsesF.flatMap { acc =>
+    accResponsesF.flatMap { accResponses =>
       getUserWithRetry(id).flatMap {
-        case success: SuccessResponse => Future.successful(acc :+ success)
-        case error: ErrorResponse => Future.successful(acc :+ error)
+        case success: SuccessResponse => Future.successful(accResponses :+ success)
+        case error: ErrorResponse => Future.successful(accResponses :+ error)
       }
     }
   }
 
-  // Sequential processing of future:
-  private val sequential2: Future[List[APIResponse]] = ids.foldLeft(emptyResponseListAsFuture) { (accumulatedResponsesFuture, id) =>
+  // Sequential processing of future with for-comprehension
+  private val sequential2: Future[List[APIResponse]] = ids.foldLeft(emptyResponseListAsFuture) { (accResponsesF, id) =>
     for {
-      accumulatedResponses <- accumulatedResponsesFuture
+      accResponses <- accResponsesF
       apiResponse <- getUserWithRetry(id)
     } yield apiResponse match {
       case success: SuccessResponse =>
         logger.info(s"Everything is just fine with ID: ${success.user.id}.")
-        accumulatedResponses :+ success
+        accResponses :+ success
       case error: ErrorResponse =>
         logger.error(s"We have an issue here with this message: ${error.error}.")
-        accumulatedResponses :+ error
+        accResponses :+ error
     }
   }
 

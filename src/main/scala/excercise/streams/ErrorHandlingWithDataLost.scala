@@ -9,7 +9,7 @@ import org.slf4j.Logger
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-object RecoverWithDataLost extends App {
+object ErrorHandlingWithDataLost extends App {
   implicit val system: ActorSystem[_] = ActorSystem(Behaviors.empty, "sys")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
   implicit val logger: Logger = system.log

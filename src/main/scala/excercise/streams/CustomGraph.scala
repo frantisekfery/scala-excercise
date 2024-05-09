@@ -45,9 +45,9 @@ object CustomGraph extends App {
       val zip = builder.add(Zip[Int, Int])
 
       source ~> broadcast
-      broadcast.out(0) ~> incrementer ~> zip.in0
-      broadcast.out(1) ~> multiplier  ~> zip.in1
-      zip.out ~> s
+                broadcast.out(0) ~> incrementer ~> zip.in0
+                broadcast.out(1) ~> multiplier  ~> zip.in1
+                                                   zip.out ~> s
 
       ClosedShape
   }).run()
@@ -57,7 +57,6 @@ object CustomGraph extends App {
       logger.info("Both streams completed successfully.")
       logger.info(s"Streams are${if (output1 != output2) " not" else ""} the same.")
       system.terminate()
-
     case Failure(e) =>
       logger.info(s"One or both streams failed with message: ${e.getMessage}")
   }}

@@ -10,7 +10,7 @@ import org.slf4j.Logger
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
-object ErrorHandlingEnhanced2 extends App {
+object ErrorHandlingWithTwoSink extends App {
   implicit val system: ActorSystem[_] = ActorSystem(Behaviors.empty, "sys")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
   implicit val logger: Logger = system.log

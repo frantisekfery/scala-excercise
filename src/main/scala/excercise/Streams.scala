@@ -17,6 +17,7 @@ object Streams extends App {
 
   private case class DomainEvent(data: String)
 
+  // database is not  configured here, so there will be dead letters
   private class PersistenceActor extends PersistentActor {
     override def persistenceId: String = "sample-id-1"
 
@@ -40,24 +41,20 @@ object Streams extends App {
   implicit val system: ActorSystem = ActorSystem()
   implicit val ec: ExecutionContextExecutor = system.dispatcher
 
-  private val source = Source(getRecords)
   private val persistentActor = system.actorOf(Props[PersistenceActor])
 
-  private val commitRecord = Flow[Record].map { record =>
-    counter = counter + 1
-    val domainEvent = DomainEvent(new String(record.getData.array()))
-    logger.info(s"Commit record: $domainEvent")
-    persistentActor ! domainEvent
-  }
+  Source(getRecords)
+    .via(Flow[Record].map { record =>
+      counter = counter + 1
+      val domainEvent = DomainEvent(new String(record.getData.array()))
+      logger.info(s"Commit record: $domainEvent")
+      // I can use here also ask '?' to wait for response If I need to handle correct order
+      persistentActor ! domainEvent
+    })
+    .runWith(Sink.ignore).onComplete {
+      logger.info(s"Counter is: $counter")
+      _ => system.terminate()
+    }
 
-  private val graph = source
-    .via(commitRecord)
-    .withAttributes(ActorAttributes.supervisionStrategy(_ => Supervision.Resume))
-    .runWith(Sink.ignore)
-
-
-  graph.onComplete {
-    logger.info(s"Counter is: $counter")
-    _ => system.terminate()
-  }
+  Thread.sleep(5000)
 }

@@ -10,7 +10,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success, Try}
 
-object ErrorHandlingEnhanced extends App {
+object ErrorHandlingWithVar extends App {
   implicit val system: ActorSystem[_] = ActorSystem(Behaviors.empty, "sys")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
   implicit val logger: Logger = system.log
