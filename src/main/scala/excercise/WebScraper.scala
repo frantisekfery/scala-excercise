@@ -22,13 +22,7 @@ object WebScraper extends App {
   Source(websites)
     .mapAsyncUnordered(parallelism = websites.size) { siteUrl =>
       Future {
-        val linksOnPage = Jsoup
-          .connect(siteUrl)
-          .get()
-          .select("a[href]")
-          .asScala
-          .map(_.attr("abs:href"))
-          .toList
+        val linksOnPage = Jsoup.connect(siteUrl).get().select("a[href]").asScala.map(_.attr("abs:href")).toList
         logger.info(s"Fetched ${linksOnPage.size} links from $siteUrl")
         logger.info(s"These links: ${linksOnPage.mkString(", ")}")
         linksOnPage

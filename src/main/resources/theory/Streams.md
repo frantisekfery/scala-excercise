@@ -54,7 +54,7 @@ a Streams application instance fails)
 - The KS API allows a Java/Scala application to interact with a Kafka Cluster.
 - Multiple applications can interact with the same cluster.
 - The architecture promotes the use of microservices.
-- Best for high-performance streams outside your microservice's logic which use the same mesage bus and low-latency
+- Best for high-performance streams outside your microservice's logic which use the same message bus and low-latency
 
 ### Weaknesses
 - Uses procedural Java-style API.

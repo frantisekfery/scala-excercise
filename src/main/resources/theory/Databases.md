@@ -72,7 +72,7 @@ data volume, sharding adds unnecessary complexity.
 shards, the costs of these operations could outweigh the benefits of sharding.
 4) **Lack of Clear Sharding Key**: If there is not a clear attribute on which to shard the database, it might result in
 uneven distribution of data, with some shards being heavy and others quite light, leading to inefficient resource 
-5) utilization.
+utilization.
 
 ## Replication
 **The entire database is copied onto multiple servers.** In the event that one server fails, the system can 

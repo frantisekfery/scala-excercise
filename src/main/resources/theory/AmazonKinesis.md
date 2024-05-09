@@ -34,7 +34,7 @@ of sources.
 ## Comparisons with competition
 
 ### Hosting and Operational Effort
-- **Apache Kafka**:  It's an open-source project which can be installed and run on any infrastructure, including 
+- **Apache Kafka**: It's an open-source project which can be installed and run on any infrastructure, including 
 on-premises servers or any cloud platform. However, it requires efforts to set up, maintain and scale.
 - **Google Cloud Pub/Sub**: Google manages all operational aspects of Pub/Sub so that you can focus on application
 development. It is designed to provide reliable, many-to-many, asynchronous messaging between applications.

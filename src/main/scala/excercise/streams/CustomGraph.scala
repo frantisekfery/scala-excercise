@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
-object AkkaStreams extends App {
+object CustomGraph extends App {
 
   implicit val system: ActorSystem[_] = ActorSystem(Behaviors.empty, "app")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
