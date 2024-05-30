@@ -69,8 +69,7 @@ object FuturesWithoutRecovering extends App {
   }
 
   // Parallel processing of future:
-  private val parallel: Future[List[APIResponse]] = Future.traverse(ids)(getUserWithRetry)
-
+  private val parallel: Future[List[APIResponse]] = Future.traverse(ids)(id => getUserWithRetry(id))
 
   private val parallel2: Future[List[APIResponse]] = Future.sequence(ids.map(id => getUserWithRetry(id)))
 
