@@ -16,10 +16,10 @@ object ErrorHandlingWithTwoSink extends App {
   implicit val logger: Logger = system.log
 
   private val source = Source(-3 to 3)
-  private val calculate: Flow[Int, Either[Int, Int], NotUsed] = Flow[Int].map { i =>
+  private val calculate: Flow[Int, Either[Int, Int], NotUsed] = Flow[Int].mapAsync(2) { i =>
     Try(100 / i) match {
-      case Success(result) => Right(result)
-      case Failure(_) => Left(i)
+      case Success(result) => Future.successful(Right(result))
+      case Failure(_) => Future.successful(Left(i))
     }
   }
 

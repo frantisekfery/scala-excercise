@@ -27,7 +27,10 @@ libraryDependencies ++= Seq(
 
   "com.amazonaws"       % "aws-java-sdk-kinesis"            % "1.9.5", // For AWS Kinesis
   "com.sksamuel.avro4s" %% "avro4s-core"                    % "4.0.11", // For Avro Serializer
-  "ch.qos.logback"      % "logback-classic"                 % "1.2.3", // For logging
+  "ch.qos.logback"      % "logback-classic"                 % "1.4.12", // For logging
   "com.lightbend.akka"  %% "akka-stream-alpakka-kinesis"    % "6.0.2", // For Commiting messages from AWS Kinesis
-  "org.jsoup"           % "jsoup"                           % "1.15.3"
+  "org.jsoup"           % "jsoup"                           % "1.15.3",
+
+  "dev.zio" %% "zio-test"     % "1.0.12" % "test",
+  "dev.zio" %% "zio-test-sbt" % "1.0.12" % "test"
 )

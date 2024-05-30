@@ -13,7 +13,7 @@ large datasets or very high traffic applications.
 Here, **the load is distributed across multiple servers**. In this strategy, the data is spread across 
 different databank machines, reducing the load on a single system and increasing the performance.
 
-In the context of databases, this is often accomplished in one of two ways:
+In the context of databases, this is often achieved in one of two ways:
 
 ## Sharding
 **The dataset is broken into smaller parts ("shards"), and each shard is put on a different server.** Each shard 
@@ -27,10 +27,10 @@ simultaneous requests they handle. **Faster Searches:** Like finding your favori
 of searching through the big, messy closet.
 2) **High Availability**: If one shard (server) goes down, it won't affect the entire system, only the subset of the
 data in that shard. Remaining shards continue to function, which increases your system availability. **Less Crashing**: 
-If one box falls (a server goes down), the others are still okay and you can still get the other shirts you need from 
+If one box falls (a server goes down), the others are still okay, and you can still get the other shirts you need from 
 those.
 3) **Scalability**: Sharding allows you to linearly scale your database system by adding more servers. This helps to 
-keep up with data growth over time. **Add More Boxes**: If you have more clothes (data), you can just add more boxes 
+keep up with data growth over time. **Add More Boxes**: If you have more clothes (data), you can add more boxes
 (servers).
 4) **Geographical Distribution**: Sharding allows you to store data closer to where customers are located. This can help 
 in reducing query latency and adhering to local regulations regarding data sovereignty. **Sort by Location**: You can 
@@ -44,7 +44,7 @@ data consistency across shards, and more complex strategies for queries and tran
 data will be accessed. If the sharding key is poorly chosen, you may face an expensive operation to repartition your 
 data later. **Best Ways to Sort**: You have to figure out the best way to sort the clothes into boxes (data into 
 servers) from the start, or you'll have a hard time later.
-3) **Complicated Queries**: Some queries that used to be straightforward become complicated or slower, if they need to 
+3) **Complicated Queries**: Some queries that used to be straightforward become complicated or slower if they need to 
 join or aggregate data from multiple shards. **Harder to Find Specific Outfit**: Finding an outfit that uses pieces from 
 different boxes (a query requiring data from multiple shards) is harder and slower.
 4) **Increased Management Overhead**: Sharding comes with the overhead of managing multiple shards, maintaining
@@ -83,8 +83,8 @@ replication each with their own pros and cons.
 ### Pros
 1) **High Availability**: If one database server goes down, the system can immediately switch to a replicated server
 with no data loss.
-2) **Load Distribution**: You can distribute **read queries** across multiple replicas to reduce load on a single server 
-and increase performance.
+2) **Load Distribution**: You can distribute **read queries** across multiple replicas to reduce a load on a single 
+server and increase performance.
 3) **Data Security**: Replicas act as backups, and in case of a catastrophic event like a disk failure, data loss can be
 minimized or avoided entirely.
 4) **Geographical Distribution**: If your application serves users globally, situating replicas in different 
@@ -92,7 +92,7 @@ geographical locations can reduce latency and improve access speed for distribut
 
 ### Cons
 1) **Write Overhead**: Every **write operation** must be carried out on every replica, which can increase latency for 
-write operations and put additional load on the system.
+write operations and put an additional load on the system.
 2) **Data Consistency**: There can be a delay in propagation of updates which may result in temporary inconsistencies 
 between replicas (also known as eventual consistency).
 3) **Storage Cost**: Each replica will consume the same amount of storage as the original database, so costs can 
@@ -110,7 +110,7 @@ multiple nodes. This is especially crucial when the database needs to be scaled 
 (by removing some nodes).
 
 In traditional hashing, when we add or remove slots, all keys may potentially be remapped to different slots. However, 
-in consistent hashing, when a slot is added or removed, only the keys that were assigned to the slot right before the 
+in consistent hashing, when a slot is added or removed, only the keys assigned to the slot right before the 
 added/removed one need to be remapped. The rest of the keys will still map to the same slot, maintaining consistency.
 
 For example, in a key-value store type of NoSQL database, keys are often hashed to map to a specific node where the 

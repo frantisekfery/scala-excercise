@@ -9,7 +9,7 @@ object FuturesTransformAndTransformWith extends App {
   val eventualInt: Future[Int] = Future[Int] {throw new Exception("An error occurred...")}
 
   eventualInt
-    .transform(result => result * 10, _ => new Exception("Transformed exception"))
+    .transform(_ * 10, _ => new Exception("Transformed exception"))
     .onComplete {
       case Success(value) => println(s"Transformed value: $value")
       case Failure(ex) => println(s"Transformed exception: ${ex.getMessage}")
@@ -23,6 +23,12 @@ object FuturesTransformAndTransformWith extends App {
     .onComplete {
       case Success(value) => println(s"TransformWith value: $value")
       case Failure(ex) => println(s"TransformWith exception: ${ex.getMessage}")
+    }
+
+  eventualInt.map(_ * 10)
+    .onComplete {
+      case Success(value) => println(s"Map value: $value")
+      case Failure(ex) => println(s"Map exception: ${ex.getMessage}")
     }
 
   Thread.sleep(5000)

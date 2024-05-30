@@ -45,4 +45,22 @@ object ErrorHandlingWithOneSink extends App {
   }
 
   Future.sequence(List(failures, successes)).onComplete(_ => system.terminate())
+
+  def sequence[T](list: List[Future[T]]): Future[List[T]] = {
+    list.foldLeft(Future.successful(List.empty[T])) { (acc, newFuture) =>
+      for {
+        accVal <- acc
+        newVal <- newFuture
+      } yield accVal :+ newVal
+    }
+  }
+
+  def traverse[A, B](list: List[A])(fn: A => Future[B]): Future[List[B]] = {
+    list.foldLeft(Future.successful(List.empty[B])) { (acc, newFuture) =>
+      for {
+        accVal <- acc
+        newValB <- fn(newFuture)
+      } yield accVal :+ newValB
+    }
+  }
 }

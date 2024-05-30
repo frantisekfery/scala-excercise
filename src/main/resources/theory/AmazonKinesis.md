@@ -47,7 +47,7 @@ the operational effort required to set up and maintain the infrastructure.
 - **Apache Kafka**: Kafka can handle very high volume real-time message feed and has better throughput in comparison to
 others.
 - **Google Cloud Pub/Sub**: Pub/Sub may not match the performance of Kafka, but it does scale automatically according to 
-the inbound data and supports auto load balancing.
+the inbound data and supports autoload balancing.
 - **Azure Event Hubs**: Event Hubs can handle millions of events per second, allowing rapid data intake that can be 
 processed further down the pipeline using other Azure services like Stream Analytics.
 - **Amazon Kinesis**: Amazon Kinesis can handle any amount of streaming data and process it from hundreds of thousands
@@ -64,7 +64,7 @@ analytic workloads.
 ### Fault tolerance
 - **Apache Kafka**: Kafka provides fault tolerance by maintaining the state of consumers' progress in topics through
 "offsets," which are sequential IDs Kafka assigns to records as they arrive. Consumers commit these offsets to a Kafka 
-topic - "_consumer_offsets" - which allows them to keep track of the records they have read in case of a failover. The 
+topic — "_consumer_offsets" — which allows them to keep track of the records they have read in case of a failover. The 
 consumer's position (called "offset watermark") can be committed in a synchronous or asynchronous manner, and in case of 
 a failure, the consumer can resume processing from the last committed offset, guaranteeing at-least-once processing
 semantics.

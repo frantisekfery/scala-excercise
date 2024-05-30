@@ -45,7 +45,7 @@ object FuturesWithoutRecovering extends App {
       }
     } yield result
 
-  private val emptyResponseListAsFuture = Future.successful(List.empty[APIResponse])
+  private val emptyResponseListAsFuture = Future.successful[List[APIResponse]](List())
 
   // Sequential processing of future:
   private val sequential: Future[List[APIResponse]] = ids.foldLeft(emptyResponseListAsFuture) { (accResponsesF, id) =>
@@ -63,22 +63,16 @@ object FuturesWithoutRecovering extends App {
       accResponses <- accResponsesF
       apiResponse <- getUserWithRetry(id)
     } yield apiResponse match {
-      case success: SuccessResponse =>
-        logger.info(s"Everything is just fine with ID: ${success.user.id}.")
-        accResponses :+ success
-      case error: ErrorResponse =>
-        logger.error(s"We have an issue here with this message: ${error.error}.")
-        accResponses :+ error
+      case success: SuccessResponse => accResponses :+ success
+      case error: ErrorResponse => accResponses :+ error
     }
   }
 
   // Parallel processing of future:
-  private val parallel: Future[Seq[APIResponse]] = Future.traverse(ids) { id =>
-    getUserWithRetry(id).map {
-      case success: SuccessResponse => success
-      case error: ErrorResponse => error
-    }
-  }
+  private val parallel: Future[List[APIResponse]] = Future.traverse(ids)(getUserWithRetry)
+
+
+  private val parallel2: Future[List[APIResponse]] = Future.sequence(ids.map(id => getUserWithRetry(id)))
 
   // Handle completion of the Future
   sequential.onComplete {
@@ -103,6 +97,30 @@ object FuturesWithoutRecovering extends App {
       logger.info(s"Values are: ${value.mkString(", ")}")
     case Failure(e) => logger.info(s"Error: ${e.getMessage}")
   }
+
+
+  Future.traverse(ids) { id =>
+    getUserWithRetry(id)
+      .map(res => (id, res))
+      .recoverWith {
+        case ex: Throwable => Future.successful((id, ErrorResponse(500, ex.getMessage)))
+      }
+  }.foreach {
+    value => {
+      println(s"Successful ids are: ${value.filter(_._2.isInstanceOf[SuccessResponse]).map(_._1)}")
+      println(s"Problematic ids are: ${value.filter(_._2.isInstanceOf[ErrorResponse])}")
+    }
+  }
+
+  ids.foldLeft(Future.successful[List[(Int, APIResponse)]](List())) {
+    (accFuture, id) => for {
+      acc <- accFuture
+      result <- getUserWithRetry(id).map(response => (id, response))
+        .recoverWith { case ex: Throwable => Future.successful(id, ErrorResponse(500, ex.getMessage)) }
+    } yield acc :+ result
+  }
+    .map(value => value.filter(_._2.isInstanceOf[ErrorResponse]).map(_._1))
+    .onComplete(println)
 
   Thread.sleep(5000)
 }

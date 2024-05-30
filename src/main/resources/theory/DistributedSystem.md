@@ -12,7 +12,7 @@ applications are designed to react to them promptly.
 ## API-driven Architecture
 This architecture involves designing and building your application based around APIs, which act as building blocks. Your 
 APIs encapsulate the business logic and the underlying database transactions, and they expose this functionality to 
-other apps that can utilize the APIs. Web applications, mobile applications, and other services can all use these APIs 
+other apps that can use the APIs. Web applications, mobile applications, and other services can all use these APIs 
 to access the functionality they provide.
 
 ## Event-driven architecture
@@ -21,10 +21,10 @@ is a change in state, or an update, like a mouse click, an item being placed in 
 services communicating that a task has been completed.
 
 ### Broker Responsibility
-broker is a system component responsible for transferring messages (or events) from publishers (or producers) to any 
+Broker is a system component responsible for transferring messages (or events) from publishers (or producers) to any 
 subscribers (or consumers) interested in those events.
-The checkpoint is a concept that is commonly used in systems that handle message streams or any continuously updating 
-log of events. The major role of a checkpoint is to track the progress of data consumption and provide fault-tolerance.
+The checkpoint is a concept commonly used in systems that handle message streams or any continuously updating log of 
+events. The major role of a checkpoint is to track the progress of data consumption and provide fault-tolerance.
 
 #### Here's a detailed explanation
 1) **Checkpointing**: A checkpoint is a mechanism by which the system takes a "snapshot" of the progress of an
@@ -38,8 +38,8 @@ stream processing pipeline.
 processing the events. Trying to process from the beginning would be inefficient and might result in duplicate 
 processing of events.
 
-This is where the checkpoint comes to rescue. The service can retrieve the checkpoint data, see where it left off, and 
-continue processing from that point, instead of starting from scratch. This provides fault-tolerance to the system.
+This is where the checkpoint comes to the rescue. The service can retrieve the checkpoint data, see where it left off, 
+and continue processing from that point, instead of starting from scratch. This provides fault-tolerance to the system.
 
 3) **Broker's Responsibility**: In some systems, the broker itself may handle the checkpointing process. It keeps track 
 of the events that have been delivered to each consumer, and which ones are acknowledged as processed.

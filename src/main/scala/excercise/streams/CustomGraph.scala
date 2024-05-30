@@ -59,4 +59,5 @@ object CustomGraph extends App {
       system.terminate()
     case Failure(e) =>
       logger.info(s"One or both streams failed with message: ${e.getMessage}")
-  }}
+  }
+}

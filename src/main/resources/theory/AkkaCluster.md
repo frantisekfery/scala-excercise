@@ -14,7 +14,7 @@ multiple machines, creating a network of nodes. They communicate by passing mess
 of a distributed system.
 
 The main challenge of building a distributed system lies in dealing with failures, network partitions and 
-inconsistencies, and that's what Akka Cluster is perfect at. It provides several features to help build resilient, 
+inconsistencies, and that's what Akka Cluster is perfect for. It provides several features to help build resilient, 
 elastic, and responsive systems:
 - **Cluster Membership**: Helps keep track and manage member nodes.
 - **Failure Detection**: Detects failing nodes in the cluster.
@@ -22,7 +22,7 @@ elastic, and responsive systems:
 - **Cluster Sharding**: Distributes actors across several nodes in the cluster.
 - **Distributed Data**: Shares mutable state among the nodes.
 
-Remember that Akka Cluster should be used in scenarios where you need a high level of resiliency and you can tolerate 
+Remember that Akka Cluster should be used in scenarios where you need a high level of resiliency, and you can tolerate 
 relatively high latency.
 
 ## Cluster Membership
@@ -64,7 +64,7 @@ cluster, Akka provides Singleton actors. The actor is always running on the olde
 
 ## Cluster Sharding
 This is an automatic way of distributing actors across many nodes of an Akka Cluster. Sharding helps when you need to 
-track many entities, each with its own persistent state and behavior.
+track many entities, each with its own persistent state and behavior. There is used consistent hashing.
 
 ## Cluster Routers
 Akka provides several different types of routers to help in actors’ location-transparent routing of messages. 
