@@ -41,13 +41,27 @@ object Anagrams extends App {
 
   val averageTime3 = (1 to times).map { _ =>
       val t4 = Instant.now
-      val wordMap = words.foldLeft(Map.empty[String, List[String]]){ (m, word) =>
+      words.foldLeft(Map.empty[String, List[String]]){ (m, word) =>
         val sortedWord = word.toLowerCase.filter(_.isLetter).sorted
         m + (sortedWord -> (word :: m.getOrElse(sortedWord, Nil)))
       }
-      val output = wordMap.values.filter(_.size > 1).mkString("\n")
+        .values.filter(_.size > 1)
+        .mkString("\n")
       val t5 = Instant.now
       Duration.between(t4, t5)
+    }.map(_.toMillis)
+    .sum.toDouble / times
+
+  val averageTime4 = (1 to times).map { _ =>
+      val t6 = Instant.now
+      words.foldLeft(Map.empty[String, List[String]]){ (m, word) =>
+        val sortedWord = word.toLowerCase.filter(_.isLetter).sorted
+        m + (sortedWord -> (word :: m.getOrElse(sortedWord, Nil)))
+      }
+        .collect { case (_, value) if value.size > 1 => value }
+        .mkString("\n")
+      val t7 = Instant.now
+      Duration.between(t6, t7)
     }.map(_.toMillis)
     .sum.toDouble / times
 
@@ -55,4 +69,5 @@ object Anagrams extends App {
   logger.info(s"Average time taken by method 1 is $averageTime1 millis")
   logger.info(s"Average time taken by method 2 is $averageTime2 millis")
   logger.info(s"Average time taken by method 3 is $averageTime3 millis")
+  logger.info(s"Average time taken by method 3 is $averageTime4 millis")
 }
