@@ -1,51 +1,51 @@
 # Book a Ticket High-level architecture
 
 ## Database Structure
-Users(UserId, FullName, Email, PasswordHash)
-Cinemas(CinemaId, Name, Address)
-Movies(MovieId, Title, Genre, Duration)
-Screenings(ScreeningId, CinemaHallId, MovieId, DateTime)
-Booking(TicketId, ScreeningId, UserId, SeatNumber)
-Notification(TicketId, ScreeningId, UserId, SeatNumber)
-Payments(PaymentId, TicketId, UserId, Status, TransactionDate)
+- Users(UserId, FullName, Email, PasswordHash)
+- Cinemas(CinemaId, Name, Address)
+- Movies(MovieId, Title, Genre, Duration)
+- Screenings(ScreeningId, CinemaHallId, MovieId, DateTime)
+- Booking(TicketId, ScreeningId, UserId, SeatNumber)
+- Notification(TicketId, ScreeningId, UserId, SeatNumber)
+- Payments(PaymentId, TicketId, UserId, Status, TransactionDate)
 
 ## API endpoints
 ### User Service API
 Manages user data and emits events relating to user actions.
-POST /users/register - Triggers UserRegistered event
-POST /users/login - Triggers UserLoggedIn event
-DELETE /users/{userId}/unregister - Triggers UserUnregistered event
+- POST /users/register - Triggers UserRegistered event
+- POST /users/login - Triggers UserLoggedIn event
+- DELETE /users/{userId}/unregister - Triggers UserUnregistered event
 
 ### Cinema Service API
 Manages cinema - cinema locations, number of halls in each cinema, hall capacities, etc.
-POST /cinemas/ - Triggers CinemaCreated event
-PATCH /cinemas/{cinemaId} - Triggers CinemaUpdated event
-DELETE /cinemas/{cinemaId} - Triggers CinemaDeleted event
-POST /cinemas/{cinemaId}/halls - Triggers HallCreated event
+- POST /cinemas/ - Triggers CinemaCreated event
+- PATCH /cinemas/{cinemaId} - Triggers CinemaUpdated event
+- DELETE /cinemas/{cinemaId} - Triggers CinemaDeleted event
+- POST /cinemas/{cinemaId}/halls - Triggers HallCreated event
 
 ### Movies Service API
 Handles details about movies.
-POST /movies/ - Triggers MovieAdded event
-PATCH /movies/{movieId} - Triggers MovieUpdated event
-DELETE /movies/{movieId} - Triggers MovieRemoved event
+- POST /movies/ - Triggers MovieAdded event
+- PATCH /movies/{movieId} - Triggers MovieUpdated event
+- DELETE /movies/{movieId} - Triggers MovieRemoved event
 
 ### Screenings Service API
 Handles movie screenings schedules, i.e., which movie is screened when and where.
-GET /screenings/ - Returns a list of all active screenings (no event, no change in state)
-GET /screenings/{screeningId} - Returns a specific screening (no event, no change in state)
-GET /screenings/{screeningId}/seats - Returns a layout of the hall and the current booking status of each seat
-POST /screenings/ - Triggers ScreeningScheduled event
-PATCH /screenings/{screeningId} - Triggers ScreeningUpdated event
-DELETE /screenings/{screeningId} - Triggers ScreeningCancelled event
+- GET /screenings/ - Returns a list of all active screenings (no event, no change in state)
+- GET /screenings/{screeningId} - Returns a specific screening (no event, no change in state)
+- GET /screenings/{screeningId}/seats - Returns a layout of the hall and the current booking status of each seat
+- POST /screenings/ - Triggers ScreeningScheduled event
+- PATCH /screenings/{screeningId} - Triggers ScreeningUpdated event
+- DELETE /screenings/{screeningId} - Triggers ScreeningCancelled event
 
 ### Booking Service API
 Orchestrates the booking process. This would be the primary service that consumes events and triggers
 further events.
-POST /tickets/book - Triggers TicketBookingAttempted event
+- POST /tickets/book - Triggers TicketBookingAttempted event
 
 ### Payment Service API
 Processes payments for ticket bookings.
-POST /payments - Triggers PaymentAttempted event
+- POST /payments - Triggers PaymentAttempted event
 
 ### Notification Service API
 Sends notifications to users (e.g., booking confirmation).
@@ -65,7 +65,7 @@ event. It marks the seat as reserved. If the booking can't be done (due to unava
 a TicketReservingFailed event.
 6) The **Notification Service** is listening for these events TicketReserved and TicketReservingFailed. On receiving 
 one of these, it sends a notification (it could be an email or an SMS) to the user indicating whether the operation was
-successful (it will also tell that it is reserved for 15 minutes waiting for payment) or failed.
+successful or failed. If it was successful it will also tell that it is reserved for 15 minutes waiting for payment.
 7) The user then has this duration to complete the payment for their booking. They can do this by making
 a POST /payments request to the **Payment Service**, including the booking details. If the Payment Service confirms 
 the payment, it will emit a PaymentSuccessful event. If the Payment Service doesn't receive a payment within 
@@ -79,4 +79,20 @@ successful or failed.
 the **Notification Service** to inform the user about the status of their ticket booking request.
 
 ## Note
-Be careful about business integrity with transactions to properly track seat bookings and payments.
+Be careful about business integrity with transactions to properly track seat bookings and payments. Few pain points:
+1) **Seat Reservation**: A user books a seat; the booking service marks the seat as reserved and not available for other 
+bookings, but the booking has not yet been completed. It's essentially a "soft booking"; the actual ticket is not issued
+yet.
+2) **Payment Initiation**: The user is directed to the payment service page where they can initiate the payment within 
+a specific time frame. 
+3) **Payment Completion/Denial**:
+   - If the payment is successful, a Payment Successful event is emitted. The booking service, listening to this event, 
+   finalizes the booking. The seat's status moves from 'reserved' to 'booked'. The user is then issued the ticket.
+   - If the payment fails or the time limit is reached before payment, a Payment Failed or Reservation Expired event is 
+   emitted. This allows the booking service to revert the seat status from 'reserved' to 'available'. Now, others can 
+   book the seat.
+4) **Booking Cancellation**: If a user decides to cancel the booking, the booking service should handle it in a way 
+where the payment service is also informed about it. Upon cancellation, if a user has made a payment, the payment 
+service can calculate and process refunds based on the cancellation policy.
+5) **Error Handling and Exception State Handling**: In case of a system error during these transactions (like 
+the payment service not responding), the system should be capable of handling such situations.
